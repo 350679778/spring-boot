@@ -22,11 +22,11 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 /**
- * Listener for the {@link SpringApplication} {@code run} method.
- * {@link SpringApplicationRunListener}s are loaded via the {@link SpringFactoriesLoader}
- * and should declare a public constructor that accepts a {@link SpringApplication}
- * instance and a {@code String[]} of arguments. A new
- * {@link SpringApplicationRunListener} instance will be created for each run.
+ * {@link SpringApplication#run(Class, String...)}方法的监听器。
+ * {@link SpringApplicationRunListener}s是通过 {@link SpringFactoriesLoader}加载的，
+ * 并且要声明一个公共构造函数————该构造函数接受一个{@link SpringApplication}实例
+ * 和一个{@link String[]}参数。 每次运行都会创建一个新的
+ * {@link SpringApplicationRunListener}实例
  *
  * @author Phillip Webb
  * @author Dave Syer
@@ -36,16 +36,14 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
 public interface SpringApplicationRunListener {
 
 	/**
-	 * Called immediately when the run method has first started. Can be used for very
-	 * early initialization.
+	 * 当 run 方法第一次启动时就会立即调用。可用于非常早的初始化操作
 	 */
 	default void starting() {
 	}
 
 	/**
-	 * Called once the environment has been prepared, but before the
-	 * {@link ApplicationContext} has been created.
-	 * @param environment the environment
+	 * 在环境准备好，但{@link ApplicationContext} 创建完成之前调用。
+	 * @param environment 当前的环境对象
 	 */
 	default void environmentPrepared(ConfigurableEnvironment environment) {
 	}

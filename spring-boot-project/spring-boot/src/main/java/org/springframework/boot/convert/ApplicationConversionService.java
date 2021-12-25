@@ -62,14 +62,12 @@ public class ApplicationConversionService extends FormattingConversionService {
 	}
 
 	/**
-	 * Return a shared default application {@code ConversionService} instance, lazily
-	 * building it once needed.
+	 * 用单例的懒汉模式延迟构建、并返回一个共享的默认应用程序{@code ConversionService}实例。
 	 * <p>
-	 * Note: This method actually returns an {@link ApplicationConversionService}
-	 * instance. However, the {@code ConversionService} signature has been preserved for
-	 * binary compatibility.
-	 * @return the shared {@code ApplicationConversionService} instance (never
-	 * {@code null})
+	 * 注意：这个方法实际上是返回了一个ApplicationConversionService实例。但是，为了二进制兼容性，
+	 * 还是保留了{@code ConversionService}特征（也就是还是返回参数声明的是ConversionService，但
+	 * 其实返回的都是ApplicationConversionService）
+	 * @return {@code ApplicationConversionService} 的共享实例 (绝不会是 {@code null})
 	 */
 	public static ConversionService getSharedInstance() {
 		ApplicationConversionService sharedInstance = ApplicationConversionService.sharedInstance;

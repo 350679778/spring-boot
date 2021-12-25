@@ -34,7 +34,7 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
 public interface SpringBootExceptionReporter {
 
 	/**
-	 * Report a startup failure to the user.
+	 * 给用户反馈一个启动失败信息
 	 * @param failure the source failure
 	 * @return {@code true} if the failure was reported or {@code false} if default
 	 * reporting should occur.
