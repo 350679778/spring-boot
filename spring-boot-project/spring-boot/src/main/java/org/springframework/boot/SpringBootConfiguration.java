@@ -28,14 +28,11 @@ import org.springframework.core.annotation.AliasFor;
 import org.springframework.stereotype.Indexed;
 
 /**
- * Indicates that a class provides Spring Boot application
- * {@link Configuration @Configuration}. Can be used as an alternative to the Spring's
- * standard {@code @Configuration} annotation so that configuration can be found
- * automatically (for example in tests).
- * <p>
- * Application should only ever include <em>one</em> {@code @SpringBootConfiguration} and
- * most idiomatic Spring Boot applications will inherit it from
- * {@code @SpringBootApplication}.
+ * 被这个注解标志的类，表示它提供了 Spring Boot 应用程序的 {@link Configuration 配置信息}。可以用作 Spring 标准的
+ * {@link Configuration} 注释的替代方法，这样的话，这个配置就可以被自动找到（例如在测试中）。
+ *
+ * 应用程序应该只包含一个 {@link SpringBootConfiguration}，并且大多数情况下的 Spring Boot 应用程序会从
+ * {@link @SpringBootApplication}继承它。
  *
  * @author Phillip Webb
  * @author Andy Wilkinson

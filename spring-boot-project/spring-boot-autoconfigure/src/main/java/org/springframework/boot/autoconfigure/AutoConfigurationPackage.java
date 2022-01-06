@@ -26,9 +26,9 @@ import java.lang.annotation.Target;
 import org.springframework.context.annotation.Import;
 
 /**
- * Registers packages with {@link AutoConfigurationPackages}. When no {@link #basePackages
- * base packages} or {@link #basePackageClasses base package classes} are specified, the
- * package of the annotated class is registered.
+ * 使用{@link AutoConfigurationPackages} 注册包里的bean对象。如果没有指定{@link #basePackages base packages}
+ * 或者 {@link #basePackageClasses base package classes}参数，那会将主配置类所在的包及其子包里面的所有组件扫描
+ * 并注册到Spring容器中
  *
  * @author Phillip Webb
  * @since 1.3.0

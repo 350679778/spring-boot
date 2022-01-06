@@ -28,7 +28,7 @@ import org.springframework.util.ClassUtils;
 public enum WebApplicationType {
 
 	/**
-	 * 该应用程序不应作为 Web 应用程序运行，也不应启动嵌入式 Web 服务器。
+	 * 该应用程序不应作为 Web 应用程序运行，也不应启动Reactive Web服务器。
 	 */
 	NONE,
 

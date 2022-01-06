@@ -27,7 +27,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.util.ReflectionUtils;
 
 /**
- * A collection of {@link SpringApplicationRunListener}.
+ * {@link SpringApplicationRunListener}的集合
  *
  * @author Phillip Webb
  */

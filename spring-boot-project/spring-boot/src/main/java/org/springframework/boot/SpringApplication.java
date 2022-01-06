@@ -312,26 +312,43 @@ public class SpringApplication {
 	 * @return 一个正在运行的 {@link ApplicationContext}
 	 */
 	public ConfigurableApplicationContext run(String... args) {
+		//启动计时器
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 		ConfigurableApplicationContext context = null;
+		//设置为headless模式
 		configureHeadlessProperty();
+		//---------1.获取并启动监听器------------------------------------------------------------------------------------
+		//获取监听器。实际上spring boot自己默认的RunListener实例只有一个：EventPublishingRunListener
 		SpringApplicationRunListeners listeners = getRunListeners(args);
+		//启动监听器
 		listeners.starting();
 		try {
+			//-----2.根据SpringApplicationRunListeners以及参数来准备环境-------------------------------------------------
 			ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
+			//设置环境变量environment，执行完成后，所有的environment的属性都会加载进来，包括application.yml和外部的属性的配置
 			ConfigurableEnvironment environment = prepareEnvironment(listeners, applicationArguments);
+			//配置系统参数spring.beaninfo.ignore
 			configureIgnoreBeanInfo(environment);
+			//在控制台打印spring boot的banner
 			Banner printedBanner = printBanner(environment);
+			//-----3.创建applicationContext-----------------------------------------------------------------------------
 			context = createApplicationContext();
+			//-----4.spring容器前置处理----------------------------------------------------------------------------------
+			//主要是调用所有初始化类的initialize方法
 			prepareContext(context, environment, listeners, applicationArguments, printedBanner);
+			//-----5.刷新spring容器-------------------------------------------------------------------------------------
 			refreshContext(context);
+			//-----6.Spring容器后置处理，主要是执行ApplicationRunner和commandLineRunner的实现类---------------------------
+			//这一步是预留出来用来扩展的，里面没有任何的实现
 			afterRefresh(context, applicationArguments);
 			stopWatch.stop();
 			if (this.logStartupInfo) {
 				new StartupInfoLogger(this.mainApplicationClass).logStarted(getApplicationLog(), stopWatch);
 			}
+			//-----7.发出结束执行的事件----------------------------------------------------------------------------------
 			listeners.started(context);
+			//-----8.执行Runners----------------------------------------------------------------------------------------
 			callRunners(context, applicationArguments);
 		}
 		catch (Throwable ex) {
@@ -444,7 +461,9 @@ public class SpringApplication {
 	}
 
 	/**
-	 * 获取所有spring工厂实例
+	 * 获取{@link SpringApplicationRunListeners}实例，它其实是所有{@link SpringApplicationRunListener}实例的集合，
+	 * 在spring boot启动的过程中，就是通过它，在各个阶段，来给所有的SpringApplicationRunListener来发起通知的。
+	 * 依旧是通过{@link #getSpringFactoriesInstances(Class, Class[], Object...)}方法去找spring.factories文件里面的内容
 	 */
 	private SpringApplicationRunListeners getRunListeners(String[] args) {
 		Class<?>[] types = new Class<?>[] { SpringApplication.class, String[].class };
@@ -460,10 +479,13 @@ public class SpringApplication {
 	 * 获取所有spring工厂类的实例
 	 */
 	private <T> Collection<T> getSpringFactoriesInstances(Class<T> type, Class<?>[] parameterTypes, Object... args) {
+		//获取类加载器
 		ClassLoader classLoader = getClassLoader();
-		// Use names and ensure unique to protect against duplicates
+		//获取相关的类的全路径名，以此来保证类不会被重复创建
 		Set<String> names = new LinkedHashSet<>(SpringFactoriesLoader.loadFactoryNames(type, classLoader));
+		//创建实例
 		List<T> instances = createSpringFactoriesInstances(type, parameterTypes, classLoader, args, names);
+		//根据配置了@Order之类的注解进行排序
 		AnnotationAwareOrderComparator.sort(instances);
 		return instances;
 	}

@@ -37,11 +37,10 @@ import org.springframework.core.annotation.AliasFor;
 import org.springframework.data.repository.Repository;
 
 /**
- * Indicates a {@link Configuration configuration} class that declares one or more
- * {@link Bean @Bean} methods and also triggers {@link EnableAutoConfiguration
- * auto-configuration} and {@link ComponentScan component scanning}. This is a convenience
- * annotation that is equivalent to declaring {@code @Configuration},
- * {@code @EnableAutoConfiguration} and {@code @ComponentScan}.
+ * 表示声明一个或多个{@link Bean @Bean}方法并触发{@link EnableAutoConfiguration
+ * auto-configuration}和{@link ComponentScan component scanning}的 {@link Configuration configuration}类。
+ * 这个注解相当于声明了{@code @Configuration}、{@code @EnableAutoConfiguration}和{@code @ComponentScan}，
+ * 用起来非常方便。
  *
  * @author Phillip Webb
  * @author Stephane Nicoll
