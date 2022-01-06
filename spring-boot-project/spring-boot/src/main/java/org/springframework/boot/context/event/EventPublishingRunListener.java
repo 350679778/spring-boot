@@ -35,6 +35,8 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.util.ErrorHandler;
 
 /**
+ * 用来发布{@link SpringApplicationEvent}s事件的{@link SpringApplicationRunListener spring应用启动监听器}
+ *
  * {@link SpringApplicationRunListener} to publish {@link SpringApplicationEvent}s.
  * <p>
  * Uses an internal {@link ApplicationEventMulticaster} for the events that are fired
@@ -55,6 +57,13 @@ public class EventPublishingRunListener implements SpringApplicationRunListener,
 
 	private final SimpleApplicationEventMulticaster initialMulticaster;
 
+	/**
+	 * 在使用构造方法初始化{@link EventPublishingRunListener}对象的时候，将SpringApplication从spring.factories中读取到的
+	 * 所有的{@link ApplicationListener}添加到了 {@link #initialMulticaster}中，然后在后续的启动中，就通过这个属性，在各个
+	 * 步骤中，通知监听器。
+	 * @param application 当前启动的{@link SpringApplication}应用对象
+	 * @param args 从{@link SpringApplication#run(Class, String...)} 传入的args属性
+	 */
 	public EventPublishingRunListener(SpringApplication application, String[] args) {
 		this.application = application;
 		this.args = args;

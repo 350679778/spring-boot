@@ -43,6 +43,7 @@ import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.boot.Banner.Mode;
+import org.springframework.boot.context.event.EventPublishingRunListener;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.source.ConfigurationPropertySources;
@@ -273,6 +274,7 @@ public class SpringApplication {
 		this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources));
 		this.webApplicationType = WebApplicationType.deduceFromClasspath();
 		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));
+		//从spring.factories中读取并创建初始化ApplicationListener对象并保存在集合中
 		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
 		this.mainApplicationClass = deduceMainApplicationClass();
 	}
@@ -477,6 +479,9 @@ public class SpringApplication {
 
 	/**
 	 * 获取所有spring工厂类的实例
+	 * @param type 要加载的类的class对象
+	 * @param parameterTypes 构造方法的参数类型，比如String、Integer什么的
+	 * @param args 构造方法的参数的默认值
 	 */
 	private <T> Collection<T> getSpringFactoriesInstances(Class<T> type, Class<?>[] parameterTypes, Object... args) {
 		//获取类加载器
@@ -1262,9 +1267,14 @@ public class SpringApplication {
 	}
 
 	/**
-	 * Sets the {@link ApplicationListener}s that will be applied to the SpringApplication
-	 * and registered with the {@link ApplicationContext}.
-	 * @param listeners the listeners to set
+	 * 给listeners属性设置会被添加到SpringApplication对象中，并且会被注册到{@link ApplicationContext}中的
+	 * {@link ApplicationListener}对象集合
+	 *
+	 * ps：这些监听器会在后面{@link #run(String...)}中，通过调用{@link #getRunListeners(String[])}方法，将
+	 * 这些监听器放入{@link EventPublishingRunListener}的{@code initialMulticaster}属性中，来对监听器做统一
+	 * 的启动时的事件通知。
+	 *
+	 * @param listeners 要设置的listener的集合
 	 */
 	public void setListeners(Collection<? extends ApplicationListener<?>> listeners) {
 		this.listeners = new ArrayList<>(listeners);
