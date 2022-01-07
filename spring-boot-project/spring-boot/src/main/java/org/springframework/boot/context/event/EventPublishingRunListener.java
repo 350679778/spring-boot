@@ -58,7 +58,7 @@ public class EventPublishingRunListener implements SpringApplicationRunListener,
 	private final SimpleApplicationEventMulticaster initialMulticaster;
 
 	/**
-	 * 在使用构造方法初始化{@link EventPublishingRunListener}对象的时候，将SpringApplication从spring.factories中读取到的
+	 * 在使用构造方法初始化{@link EventPublishingRunListener}对象的时候，将{@link SpringApplication}从spring.factories中读取到的
 	 * 所有的{@link ApplicationListener}添加到了 {@link #initialMulticaster}中，然后在后续的启动中，就通过这个属性，在各个
 	 * 步骤中，通知监听器。
 	 * @param application 当前启动的{@link SpringApplication}应用对象

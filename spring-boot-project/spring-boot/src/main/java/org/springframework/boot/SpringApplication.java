@@ -321,9 +321,10 @@ public class SpringApplication {
 		//设置为headless模式
 		configureHeadlessProperty();
 		//---------1.获取并启动监听器------------------------------------------------------------------------------------
-		//获取监听器。实际上spring boot自己默认的RunListener实例只有一个：EventPublishingRunListener
+		// 获取启动监听器。实际上spring boot自己默认的RunListener实例只有一个：EventPublishingRunListener，所以在listeners
+		// 里面，只有EventPublishingRunListener一个类
 		SpringApplicationRunListeners listeners = getRunListeners(args);
-		//启动监听器
+		// 发出启动的通知
 		listeners.starting();
 		try {
 			//-----2.根据SpringApplicationRunListeners以及参数来准备环境-------------------------------------------------
@@ -402,14 +403,19 @@ public class SpringApplication {
 
 	private void prepareContext(ConfigurableApplicationContext context, ConfigurableEnvironment environment,
 			SpringApplicationRunListeners listeners, ApplicationArguments applicationArguments, Banner printedBanner) {
+		// 设置容器环境，包括各种变量
 		context.setEnvironment(environment);
+		// 执行容器后置处理
 		postProcessApplicationContext(context);
+		// 执行容器中的ApplicationContextInitializer(包括spring.factories和自定义的实例)
 		applyInitializers(context);
+		// 发送容器已经准备好的事件，通知各监听器
 		listeners.contextPrepared(context);
 		if (this.logStartupInfo) {
 			logStartupInfo(context.getParent() == null);
 			logStartupProfileInfo(context);
 		}
+		//注册启动参数bean，这里将容器指定的参数封装成bean，注入容器
 		// Add boot specific singleton beans
 		ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
 		beanFactory.registerSingleton("springApplicationArguments", applicationArguments);
@@ -426,7 +432,9 @@ public class SpringApplication {
 		// Load the sources
 		Set<Object> sources = getAllSources();
 		Assert.notEmpty(sources, "Sources must not be empty");
+		// 启动类被加载到beanDefinitionMap中，后续该启动类将作为开启自动化配置的入口。
 		load(context, sources.toArray(new Object[0]));
+		// 发布容器已加载事件
 		listeners.contextLoaded(context);
 	}
 
@@ -465,7 +473,9 @@ public class SpringApplication {
 	/**
 	 * 获取{@link SpringApplicationRunListeners}实例，它其实是所有{@link SpringApplicationRunListener}实例的集合，
 	 * 在spring boot启动的过程中，就是通过它，在各个阶段，来给所有的SpringApplicationRunListener来发起通知的。
-	 * 依旧是通过{@link #getSpringFactoriesInstances(Class, Class[], Object...)}方法去找spring.factories文件里面的内容
+	 *
+	 * 获取实例的方式，依旧是通过{@link #getSpringFactoriesInstances(Class, Class[], Object...)}方法去找
+	 * spring.factories文件里面的内容
 	 */
 	private SpringApplicationRunListeners getRunListeners(String[] args) {
 		Class<?>[] types = new Class<?>[] { SpringApplication.class, String[].class };
@@ -678,14 +688,18 @@ public class SpringApplication {
 	}
 
 	/**
-	 * Apply any {@link ApplicationContextInitializer}s to the context before it is
-	 * refreshed.
-	 * @param context the configured ApplicationContext (not refreshed yet)
+	 * 在{@link ConfigurableApplicationContext#refresh()}之前，将所有的{@link ApplicationContextInitializer}s
+	 * 添加到上下文中
+	 *
+	 * {@link ApplicationContextInitializer}是在{@link #SpringApplication(ResourceLoader, Class[])}中初始化的
+	 *
+	 * @param context 配置的ApplicationContext (在当前还没有执行{@link ConfigurableApplicationContext#refresh()}方法)
 	 * @see ConfigurableApplicationContext#refresh()
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected void applyInitializers(ConfigurableApplicationContext context) {
 		for (ApplicationContextInitializer initializer : getInitializers()) {
+			//循环调用initialize方法
 			Class<?> requiredType = GenericTypeResolver.resolveTypeArgument(initializer.getClass(),
 					ApplicationContextInitializer.class);
 			Assert.isInstanceOf(requiredType, context, "Unable to call initializer.");
